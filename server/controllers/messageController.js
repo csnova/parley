@@ -1,4 +1,5 @@
 const Message = require("../models/messages");
+const Thread = require("../models/threads");
 const passport = require("passport");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -7,10 +8,63 @@ const { body, validationResult } = require("express-validator");
 
 // Display Message Details.
 exports.message_details = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Message Details");
+  const [message] = await Promise.all([
+    Message.find(
+      { _id: req.body._id },
+      "from to text timestamp thread viewed "
+    ).exec(),
+  ]);
+  res.json({
+    message: message,
+  });
 });
+
+// Example displaying message details
+// curl -X GET http://localhost:3000/parley/message -H "Content-Type: application/json" -d '{"_id": "65af16dff2a322669a0cb2e5"}'
+// Worked 1/22 5:30 pm
 
 // Handle create message.
 exports.message_create = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: New");
+  // Check if thread exists
+  const [thread1, thread2] = await Promise.all([
+    Thread.find({ user1: req.body.from, user2: req.body.to }, "_id").exec(),
+    Thread.find({ user1: req.body.to, user2: req.body.from }, "_id").exec(),
+  ]);
+  // If Thread Get ID
+  let threadID;
+  if (thread1[0]) {
+    threadID = thread1[0]._id;
+  } else if (thread2[0]) {
+    threadID = thread2[0]._id;
+  } else {
+    // If Not Thread Create One
+    const thread = new Thread({
+      user1: req.body.from,
+      user2: req.body.to,
+    });
+    await thread.save();
+    const [thread3] = await Promise.all([
+      Thread.find({ user1: req.body.from, user2: req.body.to }, "_id").exec(),
+    ]);
+    threadID = thread3[0]._id;
+  }
+  threadID = String(threadID);
+
+  // Create Message with Thread ID
+  const dateTime = new Date();
+  const message = new Message({
+    from: req.body.from,
+    to: req.body.to,
+    text: req.body.text,
+    timestamp: dateTime,
+    thread: threadID,
+    viewed: false,
+  });
+  await message.save();
+
+  //Send back Thread ID
+  res.json(threadID);
 });
+// Example for sending a message
+// curl -X POST http://localhost:3000/parley/message/create -H "Content-Type: application/json" -d '{"from":"65ab16999d55fb577750639e", "to":"65aef10a06d049c8a1ae544d", "text": "Hey, thanks for accepting my friend request!"}'
+// Worked 1/22 5:30 pm

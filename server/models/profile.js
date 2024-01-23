@@ -12,10 +12,5 @@ const ProfileSchema = new Schema({
   book: { type: String, required: true, maxLength: 100 },
 });
 
-// A static method to the Profile model for finding a profile by userId
-ProfileSchema.statics.findByUserID = async function (user) {
-  return this.findOne({ user });
-};
-
 // Export model
 module.exports = mongoose.model("Profile", ProfileSchema);

@@ -27,7 +27,7 @@ exports.user_detail = asyncHandler(async (req, res, next) => {
 
 // Example for getting user details
 // curl -X GET http://localhost:3000/parley/user/details -H "Content-Type: application/json" -d '{"userID":"65aac53e9d6b84a1665c718e"}'
-//Worked 1/19 4:30 pm
+// Worked 1/19 4:30 pm
 
 // Handle User sign up on POST.
 exports.user_sign_up = [
