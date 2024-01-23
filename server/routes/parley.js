@@ -28,10 +28,10 @@ router.post("/friend/remove", friend_controller.friend_remove);
 // Message Routers
 router.get("/message", message_controller.message_details);
 router.post("/message/create", message_controller.message_create);
+router.post("/message/viewed", message_controller.message_viewed);
 
 // Thread Routers
 router.get("/thread", thread_controller.thread_list);
-router.get("/thread/check", thread_controller.thread_check);
 router.get("/thread/messages", thread_controller.thread_messages);
 
 module.exports = router;

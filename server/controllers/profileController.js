@@ -1,12 +1,15 @@
 const Profile = require("../models/profile");
+const Friends = require("../models/friends");
+const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 
 // Display detail page for a profile.
 exports.profile_details = asyncHandler(async (req, res, next) => {
-  const [profile] = await Promise.all([
+  const [profile, friendsList] = await Promise.all([
     Profile.find({ user: req.body.userID }, "name bio band movie book").exec(),
+    Friends.find({ user: req.body.userID }, "current").exec(),
   ]);
 
   if (profile === null) {
@@ -15,13 +18,24 @@ exports.profile_details = asyncHandler(async (req, res, next) => {
     err.status = 404;
     return next(err);
   }
+
+  let currentUsernameList = [];
+  for (let i = 0; i < friendsList[0].current.length; i++) {
+    const currentFriend = await User.find(
+      { _id: friendsList[0].current[i] },
+      "_id username"
+    ).exec();
+    currentUsernameList.push(currentFriend[0]);
+  }
+
   res.json({
     profile: profile,
+    friends: currentUsernameList,
   });
 });
 
 // Example for getting a users profile
-// curl -X GET http://localhost:3000/parley/profile -H "Content-Type: application/json" -d '{"userID":"65ab16999d55fb577750639e"}'
+// curl -X GET http://localhost:3000/parley/profile -H "Content-Type: application/json" -d '{"userID":"65afe69f865aa8e8a4986713"}'
 // Worked 1/22 10:00 am
 
 // Handle profile update on POST.

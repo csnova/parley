@@ -20,7 +20,6 @@ exports.user_detail = asyncHandler(async (req, res, next) => {
     return next(err);
   }
   res.json({
-    user: req.user,
     specificUser: specificUser,
   });
 });

@@ -1,4 +1,5 @@
 const Friends = require("../models/friends");
+const User = require("../models/user");
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 
@@ -8,11 +9,42 @@ exports.friend_list = asyncHandler(async (req, res, next) => {
     { user: req.body.userID },
     "current requests awaitingApproval"
   ).exec();
-  res.json(friendsList);
+  let currentUsernameList = [];
+  for (let i = 0; i < friendsList[0].current.length; i++) {
+    const currentFriend = await User.find(
+      { _id: friendsList[0].current[i] },
+      "_id username"
+    ).exec();
+    currentUsernameList.push(currentFriend[0]);
+  }
+  let requestsUsernameList = [];
+  for (let i = 0; i < friendsList[0].requests.length; i++) {
+    const currentFriend = await User.find(
+      { _id: friendsList[0].requests[i] },
+      "_id username"
+    ).exec();
+    requestsUsernameList.push(currentFriend[0]);
+  }
+  let approvalUsernameList = [];
+  for (let i = 0; i < friendsList[0].awaitingApproval.length; i++) {
+    const currentFriend = await User.find(
+      { _id: friendsList[0].awaitingApproval[i] },
+      "_id username"
+    ).exec();
+    approvalUsernameList.push(currentFriend[0]);
+  }
+
+  const friendsListUsernames = {
+    current: currentUsernameList,
+    requests: requestsUsernameList,
+    awaitingApproval: approvalUsernameList,
+  };
+
+  res.json(friendsListUsernames);
 });
 
 // Example for getting a list of a users friends
-// curl -X GET http://localhost:3000/parley/friend -H "Content-Type: application/json" -d '{"userID":"65ab16999d55fb577750639e"}'
+// curl -X GET http://localhost:3000/parley/friend -H "Content-Type: application/json" -d '{"userID":"65afe69f865aa8e8a4986713"}'
 // Worked 1/22 10:00 am
 
 // Display if 2 users are friends on GET.
@@ -33,7 +65,7 @@ exports.friend_status = asyncHandler(async (req, res, next) => {
 });
 
 // Example for checking if 2 users are friends
-// curl -X GET http://localhost:3000/parley/friend/status -H "Content-Type: application/json" -d '{"user1":"65aac53e9d6b84a1665c7190", "user2":"65ab16999d55fb577750639e"}'
+// curl -X GET http://localhost:3000/parley/friend/status -H "Content-Type: application/json" -d '{"user1":"65afe69f865aa8e8a4986713", "user2":"65afe6ae865aa8e8a498671a"}'
 // Worked 1/22 10:00 am
 
 // Handle add friend request on POST.
@@ -112,7 +144,7 @@ exports.friend_request = asyncHandler(async (req, res, next) => {
 });
 
 // Example for sending a friend request
-// curl -X POST http://localhost:3000/parley/friend/request -H "Content-Type: application/json" -d '{"currentUser":"65aef16a06d049c8a1ae5454", "friendRequest":"65aef25e06d049c8a1ae5466"}'
+// curl -X POST http://localhost:3000/parley/friend/request -H "Content-Type: application/json" -d '{"currentUser":"65afe6cc865aa8e8a4986721", "friendRequest":"65afe6e0865aa8e8a4986728"}'
 // Worked 1/22 12:00 pm
 
 // Handle accept friend request on POST.
@@ -189,7 +221,7 @@ exports.friend_accept_request = asyncHandler(async (req, res, next) => {
 });
 
 // Example for accepting a friend request
-// curl -X POST http://localhost:3000/parley/friend/accept -H "Content-Type: application/json" -d '{"currentUser":"65aef10a06d049c8a1ae544d", "approvedFriend":"65ab16999d55fb577750639e"}'
+// curl -X POST http://localhost:3000/parley/friend/accept -H "Content-Type: application/json" -d '{"currentUser":"65afe6f0865aa8e8a498672f", "approvedFriend":"65afe69f865aa8e8a4986713"}'
 // Worked 1/22 12:30 pm
 
 // Handle remove friend on POST.

@@ -5,9 +5,11 @@ const Schema = mongoose.Schema;
 
 const FriendsSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  current: { type: Array, required: true },
-  requests: { type: Array, required: true },
-  awaitingApproval: { type: Array, required: true },
+  current: [{ type: Schema.Types.ObjectId, ref: "User", required: true }],
+  requests: [{ type: Schema.Types.ObjectId, ref: "User", required: true }],
+  awaitingApproval: [
+    { type: Schema.Types.ObjectId, ref: "User", required: true },
+  ],
 });
 
 // Export model

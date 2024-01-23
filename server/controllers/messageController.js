@@ -9,10 +9,10 @@ const { body, validationResult } = require("express-validator");
 // Display Message Details.
 exports.message_details = asyncHandler(async (req, res, next) => {
   const [message] = await Promise.all([
-    Message.find(
-      { _id: req.body._id },
-      "from to text timestamp thread viewed "
-    ).exec(),
+    Message.find({ _id: req.body._id }, "from to text timestamp thread viewed ")
+      .populate("from")
+      .populate("to")
+      .exec(),
   ]);
   res.json({
     message: message,
@@ -20,7 +20,7 @@ exports.message_details = asyncHandler(async (req, res, next) => {
 });
 
 // Example displaying message details
-// curl -X GET http://localhost:3000/parley/message -H "Content-Type: application/json" -d '{"_id": "65af16dff2a322669a0cb2e5"}'
+// curl -X GET http://localhost:3000/parley/message -H "Content-Type: application/json" -d '{"_id": "65aff020e8bbe910aeb45c84"}'
 // Worked 1/22 5:30 pm
 
 // Handle create message.
@@ -66,5 +66,34 @@ exports.message_create = asyncHandler(async (req, res, next) => {
   res.json(threadID);
 });
 // Example for sending a message
-// curl -X POST http://localhost:3000/parley/message/create -H "Content-Type: application/json" -d '{"from":"65ab16999d55fb577750639e", "to":"65aef10a06d049c8a1ae544d", "text": "Hey, thanks for accepting my friend request!"}'
+// curl -X POST http://localhost:3000/parley/message/create -H "Content-Type: application/json" -d '{"from":"65afe6ae865aa8e8a498671a", "to":"65afe69f865aa8e8a4986713", "text": "Yeah of course. How have you been?"}'
 // Worked 1/22 5:30 pm
+
+// Handle marking message as viewed
+exports.message_viewed = asyncHandler(async (req, res, next) => {
+  const [message] = await Promise.all([
+    Message.find({ _id: req.body.messageID }).exec(),
+  ]);
+
+  // Create a new message object
+  const newMessage = new Message({
+    from: message[0].from,
+    to: message[0].to,
+    text: message[0].text,
+    timestamp: message[0].timestamp,
+    thread: message[0].thread,
+    viewed: true,
+    _id: message[0]._id,
+  });
+
+  const updateMessage = await Message.findByIdAndUpdate(
+    message[0]._id,
+    newMessage
+  );
+
+  //Send back Thread ID
+  res.json("Success");
+});
+// Example for marking a message as viewed
+// curl -X POST http://localhost:3000/parley/message/viewed -H "Content-Type: application/json" -d '{"messageID" : "65aff020e8bbe910aeb45c84"}'
+// Worked 1/23 9:30 am
