@@ -8,8 +8,10 @@ const { body, validationResult } = require("express-validator");
 // Display detail page for a profile.
 exports.profile_details = asyncHandler(async (req, res, next) => {
   const [profile, friendsList] = await Promise.all([
-    Profile.find({ user: req.body.userID }, "name bio band movie book").exec(),
-    Friends.find({ user: req.body.userID }, "current").exec(),
+    Profile.find({ user: req.params.userID }, "name bio band movie book user")
+      .populate("user")
+      .exec(),
+    Friends.find({ user: req.params.userID }, "current").exec(),
   ]);
 
   if (profile === null) {
@@ -35,7 +37,7 @@ exports.profile_details = asyncHandler(async (req, res, next) => {
 });
 
 // Example for getting a users profile
-// curl -X GET http://localhost:3000/parley/profile -H "Content-Type: application/json" -d '{"userID":"65afe69f865aa8e8a4986713"}'
+// curl -X GET http://localhost:3000/parley/profile/65afe69f865aa8e8a4986713
 // Worked 1/22 10:00 am
 
 // Handle profile update on POST.

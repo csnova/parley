@@ -6,7 +6,7 @@ const { body, validationResult } = require("express-validator");
 // Display list of a users friends.
 exports.friend_list = asyncHandler(async (req, res, next) => {
   const friendsList = await Friends.find(
-    { user: req.body.userID },
+    { user: req.params.userID },
     "current requests awaitingApproval"
   ).exec();
   let currentUsernameList = [];
@@ -44,13 +44,13 @@ exports.friend_list = asyncHandler(async (req, res, next) => {
 });
 
 // Example for getting a list of a users friends
-// curl -X GET http://localhost:3000/parley/friend -H "Content-Type: application/json" -d '{"userID":"65afe69f865aa8e8a4986713"}'
+// curl -X GET http://localhost:3000/parley/friend/65afe6f0865aa8e8a498672f
 // Worked 1/22 10:00 am
 
 // Display if 2 users are friends on GET.
 exports.friend_status = asyncHandler(async (req, res, next) => {
   const friendsList = await Friends.find(
-    { user: req.body.user1 },
+    { user: req.params.userID },
     "current"
   ).exec();
 
@@ -58,14 +58,14 @@ exports.friend_status = asyncHandler(async (req, res, next) => {
   let isFriends = false;
   for (let i = 0; i < friendsList[0].current.length; i++) {
     let currentFriend = String(friendsList[0].current[i]);
-    if (currentFriend === req.body.user2) isFriends = true;
+    if (currentFriend === req.params.friendID) isFriends = true;
   }
 
   res.json(isFriends);
 });
 
 // Example for checking if 2 users are friends
-// curl -X GET http://localhost:3000/parley/friend/status -H "Content-Type: application/json" -d '{"user1":"65afe69f865aa8e8a4986713", "user2":"65afe6ae865aa8e8a498671a"}'
+// curl -X GET http://localhost:3000/parley/friend/status/65afe69f865aa8e8a4986713/65afe6ae865aa8e8a498671a
 // Worked 1/22 10:00 am
 
 // Handle add friend request on POST.

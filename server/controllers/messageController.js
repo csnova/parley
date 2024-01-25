@@ -66,7 +66,7 @@ exports.message_create = asyncHandler(async (req, res, next) => {
   res.json(threadID);
 });
 // Example for sending a message
-// curl -X POST http://localhost:3000/parley/message/create -H "Content-Type: application/json" -d '{"from":"65afe6ae865aa8e8a498671a", "to":"65afe69f865aa8e8a4986713", "text": "Yeah of course. How have you been?"}'
+// curl -X POST http://localhost:3000/parley/message/create -H "Content-Type: application/json" -d '{"from":"65afe6cc865aa8e8a4986721", "to":"65afe6e0865aa8e8a4986728", "text": "Welcome!"}'
 // Worked 1/22 5:30 pm
 
 // Handle marking message as viewed
