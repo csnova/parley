@@ -22,6 +22,10 @@ router.post("/profile/update", profile_controller.profile_update);
 // Friend Routers
 router.get("/friend/:userID", friend_controller.friend_list);
 router.get("/friend/status/:userID/:friendID", friend_controller.friend_status);
+router.get(
+  "/friend/allStats/:userID/:friendID",
+  friend_controller.friend_allStats
+);
 router.post("/friend/request", friend_controller.friend_request);
 router.post("/friend/accept", friend_controller.friend_accept_request);
 router.post("/friend/remove", friend_controller.friend_remove);

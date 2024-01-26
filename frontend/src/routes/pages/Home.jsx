@@ -16,6 +16,7 @@ import UserProfile2 from "./userProfile2";
 import UserProfile1 from "./userProfile1";
 import FriendsList from "./FriendsList";
 import AddFriends from "./AddFriend";
+import FriendsRequests from "./FriendRequests";
 
 function Home() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -79,7 +80,7 @@ function Home() {
                 <Link to="/friendsList" className="subLinkBox">
                   Friend List
                 </Link>
-                <Link to="/sign-out" className="subLinkBox">
+                <Link to="/friendRequests" className="subLinkBox">
                   Friend Requests
                 </Link>
                 <Link to="/addFriends" className="subLinkBox">
@@ -197,6 +198,11 @@ function Home() {
               />
             ) : page === "friendsList" ? (
               <FriendsList
+                currentUser={currentUser}
+                setUserViewed={setUserViewed}
+              />
+            ) : page === "friendRequests" ? (
+              <FriendsRequests
                 currentUser={currentUser}
                 setUserViewed={setUserViewed}
               />

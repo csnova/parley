@@ -11,6 +11,7 @@ const Profile = ({ currentUser, currentProfile, setCurrentProfile }) => {
   );
   if (error) return <p>A Network Error has occurred. </p>;
   if (loading) return <p>Loading...</p>;
+
   return (
     <div className="page">
       <h1 className="pageTitle">Profile</h1>

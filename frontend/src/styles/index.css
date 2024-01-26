@@ -50,6 +50,10 @@ button {
   outline: inherit;
 }
 
+Link {
+  text-decoration: none;
+}
+
 body {
   margin: 0;
   display: flex;
@@ -337,6 +341,15 @@ table {
 
 #userLink:hover {
   background-color: var(--page-background-color);
+  color: var(--dark-font-color);
+}
+
+#userLink * {
+  text-decoration: none;
+  color: var(--light-font-color);
+}
+
+#userLink:hover * {
   color: var(--dark-font-color);
 }
 

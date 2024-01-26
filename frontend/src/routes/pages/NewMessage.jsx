@@ -54,6 +54,9 @@ const NewMessage = ({
   function newMessageSubmit(e) {
     if (isPossible)
       attemptNewMessage(currentUser._id, currentFriend, currentText);
+    setPossibleTo([]);
+    setCurrentFriend("");
+    setCurrentTo("");
   }
 
   function handleToChange(e) {

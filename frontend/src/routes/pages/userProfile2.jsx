@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import viewIcon from "../../assets/show.png";
 import getProfileDetails from "../getRequests/getProfileDetails";
 import getFriendStatus from "../getRequests/getFriendStatus";
+import useAddFriend from "../postRequests/postAddFriend";
+import useRemoveFriend from "../postRequests/postRemoveFriend";
 
 const UserProfile2 = ({
   currentUser,
@@ -20,6 +22,18 @@ const UserProfile2 = ({
     currentUser._id,
     userViewed
   );
+  const { attemptAddFriend } = useAddFriend();
+  const { attemptRemoveFriend } = useRemoveFriend();
+  const [requestSent, setRequestSent] = useState(false);
+
+  function addFriendSubmit(e) {
+    attemptAddFriend(currentUser._id, userViewed);
+    setRequestSent(true);
+  }
+
+  function removeFriendSubmit(e) {
+    attemptRemoveFriend(currentUser._id, userViewed);
+  }
 
   function newMessage(e) {
     setCurrentTo(profileDetails.profile[0].user.username);
@@ -39,10 +53,11 @@ const UserProfile2 = ({
               <h1 className="pageTitle">
                 Profile: {profileDetails.profile[0].user.username}
               </h1>
-              <button onClick={newMessage}>
-                <Link className="addButtonBox" to="/newMessage">
-                  Send Message
-                </Link>
+              <button id="userLink" onClick={newMessage}>
+                <Link to="/newMessage">Send Message</Link>
+              </button>
+              <button id="userLink" onClick={removeFriendSubmit}>
+                <Link to="/friendsList">Remove Friend</Link>
               </button>
             </div>
           ) : (
@@ -50,11 +65,13 @@ const UserProfile2 = ({
               <h1 className="pageTitle">
                 Profile: {profileDetails.profile[0].user.username}
               </h1>
-              <button>
-                <Link to="/" id="userLink">
+              {requestSent ? (
+                <button id="userLink">Request Sent</button>
+              ) : (
+                <button id="userLink" onClick={addFriendSubmit}>
                   Add
-                </Link>
-              </button>
+                </button>
+              )}
             </div>
           )}
           <div className="tableBox">
@@ -100,6 +117,7 @@ const UserProfile2 = ({
               </thead>
               <tbody>
                 {profileDetails.friends.map((friend, index) => {
+                  if (friend._id === currentUser._id) return;
                   function onUserClick(e) {
                     let userID = e.target.className;
                     setUserViewed(userID);

@@ -16,15 +16,17 @@ const AddFriends = ({ currentUser, setUserViewed }) => {
       let length = current.length;
       let friendObject = [];
       for (let i = 0; i < userList.length; i++) {
-        let friend = userList[i].username;
-        friend = String(friend);
-        friend = friend.slice(0, length);
-        if (friend === current)
-          friendObject.push({
-            username: userList[i].username,
-            _id: userList[i]._id,
-          });
-        setPossibleAdd(friendObject);
+        if (userList[i]._id !== currentUser._id) {
+          let friend = userList[i].username;
+          friend = String(friend);
+          friend = friend.slice(0, length);
+          if (friend === current)
+            friendObject.push({
+              username: userList[i].username,
+              _id: userList[i]._id,
+            });
+          setPossibleAdd(friendObject);
+        }
       }
     }
   }, [currentAdd]);
@@ -34,6 +36,7 @@ const AddFriends = ({ currentUser, setUserViewed }) => {
   }
   if (error) return <p>A Network Error has occurred. </p>;
   if (loading) return <p>Loading...</p>;
+
   return (
     <div className="page">
       {currentUser ? (
@@ -52,12 +55,12 @@ const AddFriends = ({ currentUser, setUserViewed }) => {
           <div id="friendOptions">
             {possibleAdd.map((friend, index) => {
               return (
-                <button onClick={setUserId} id="selectedFriend">
-                  <Link
-                    to="/userProfile1"
-                    className={friend._id}
-                    key={friend._id}
-                  >
+                <button
+                  onClick={setUserId}
+                  id="selectedFriend"
+                  key={friend._id}
+                >
+                  <Link to="/userProfile1" className={friend._id}>
                     {friend.username}
                   </Link>
                 </button>

@@ -68,6 +68,29 @@ exports.friend_status = asyncHandler(async (req, res, next) => {
 // curl -X GET http://localhost:3000/parley/friend/status/65afe69f865aa8e8a4986713/65afe6ae865aa8e8a498671a
 // Worked 1/22 10:00 am
 
+// Display how 2 users are connected
+exports.friend_allStats = asyncHandler(async (req, res, next) => {
+  const friendsList = await Friends.find(
+    { user: req.params.userID },
+    "current requests awaitingApproval"
+  ).exec();
+
+  console.log(friendsList);
+
+  // Check if user2 is in the current friend list of user1
+  let isFriends = false;
+  for (let i = 0; i < friendsList[0].current.length; i++) {
+    let currentFriend = String(friendsList[0].current[i]);
+    if (currentFriend === req.params.friendID) isFriends = true;
+  }
+
+  res.json(isFriends);
+});
+
+// Example for checking if 2 users are friends
+// curl -X GET http://localhost:3000/parley/friend/allStats/65b3f655bbf9e2f3c1823d6b/65b3f976bbf9e2f3c1823dd4
+// Worked 1/22 10:00 am
+
 // Handle add friend request on POST.
 exports.friend_request = asyncHandler(async (req, res, next) => {
   const currentFriendsList = await Friends.find(
@@ -149,74 +172,78 @@ exports.friend_request = asyncHandler(async (req, res, next) => {
 
 // Handle accept friend request on POST.
 exports.friend_accept_request = asyncHandler(async (req, res, next) => {
-  const currentFriendsList = await Friends.find(
-    { user: req.body.currentUser },
-    "user current requests awaitingApproval _id"
-  ).exec();
-  const approvedFriendList = await Friends.find(
-    { user: req.body.approvedFriend },
-    "user current requests awaitingApproval _id"
-  ).exec();
-
-  // Verify they are awaiting current users approval
-  let awaitingApproval = false;
-  for (let i = 0; i < currentFriendsList[0].awaitingApproval.length; i++) {
-    let currentFriend = String(currentFriendsList[0].awaitingApproval[i]);
-    if (currentFriend === req.body.approvedFriend) awaitingApproval = true;
-  }
-
-  if (!awaitingApproval) {
-    res.json("Friend Request Not Found");
-  } else {
-    // Find awaiting approval request and remove it
-    const newAwaitingApproval = [];
+  try {
+    const currentFriendsList = await Friends.find(
+      { user: req.body.currentUser },
+      "user current requests awaitingApproval _id"
+    ).exec();
+    const approvedFriendList = await Friends.find(
+      { user: req.body.approvedFriend },
+      "user current requests awaitingApproval _id"
+    ).exec();
+    // Verify they are awaiting current users approval
+    let awaitingApproval = false;
     for (let i = 0; i < currentFriendsList[0].awaitingApproval.length; i++) {
       let currentFriend = String(currentFriendsList[0].awaitingApproval[i]);
-      if (currentFriend !== req.body.approvedFriend) {
-        newAwaitingApproval.push(currentFriendsList[0].awaitingApproval[i]);
-      }
+      if (currentFriend === req.body.approvedFriend) awaitingApproval = true;
     }
-    // Add to current friends list
-    let newFriendList = currentFriendsList[0].current;
-    newFriendList = newFriendList.push(req.body.approvedFriend);
-    // Save changes
-    const newCurrentFriendsList = new Friends({
-      user: currentFriendsList[0].user,
-      current: currentFriendsList[0].current,
-      requests: currentFriendsList[0].requests,
-      awaitingApproval: newAwaitingApproval,
-      _id: currentFriendsList[0]._id,
-    });
-    const updateCurrentUser = await Friends.findByIdAndUpdate(
-      currentFriendsList[0]._id,
-      newCurrentFriendsList
-    );
 
-    // Find request and remove it
-    const newRequests = [];
-    for (let i = 0; i < approvedFriendList[0].requests.length; i++) {
-      let currentRequests = String(approvedFriendList[0].requests[i]);
-      if (currentRequests !== req.body.currentUser) {
-        newRequests.push(approvedFriendList[0].requests[i]);
+    if (!awaitingApproval) {
+      res.json("Friend Request Not Found");
+    } else {
+      // Find awaiting approval request and remove it
+      const newAwaitingApproval = [];
+      for (let i = 0; i < currentFriendsList[0].awaitingApproval.length; i++) {
+        let currentFriend = String(currentFriendsList[0].awaitingApproval[i]);
+        if (currentFriend !== req.body.approvedFriend) {
+          newAwaitingApproval.push(currentFriendsList[0].awaitingApproval[i]);
+        }
       }
-    }
-    // Add to current friends list
-    let newFriendsApproved = approvedFriendList[0].current;
-    newFriendsApproved = newFriendsApproved.push(req.body.currentUser);
-    // Save changes
-    const newApprovedFriendsList = new Friends({
-      user: approvedFriendList[0].user,
-      current: approvedFriendList[0].current,
-      requests: newRequests,
-      awaitingApproval: approvedFriendList[0].awaitingApproval,
-      _id: approvedFriendList[0]._id,
-    });
-    const updateApprovedFriend = await Friends.findByIdAndUpdate(
-      approvedFriendList[0]._id,
-      newApprovedFriendsList
-    );
+      // Add to current friends list
+      let newFriendList = currentFriendsList[0].current;
+      newFriendList = newFriendList.push(req.body.approvedFriend);
+      // Save changes
+      const newCurrentFriendsList = new Friends({
+        user: currentFriendsList[0].user,
+        current: currentFriendsList[0].current,
+        requests: currentFriendsList[0].requests,
+        awaitingApproval: newAwaitingApproval,
+        _id: currentFriendsList[0]._id,
+      });
+      const updateCurrentUser = await Friends.findByIdAndUpdate(
+        currentFriendsList[0]._id,
+        newCurrentFriendsList
+      );
 
-    res.json("Success");
+      // Find request and remove it
+      const newRequests = [];
+      for (let i = 0; i < approvedFriendList[0].requests.length; i++) {
+        let currentRequests = String(approvedFriendList[0].requests[i]);
+        if (currentRequests !== req.body.currentUser) {
+          newRequests.push(approvedFriendList[0].requests[i]);
+        }
+      }
+      // Add to current friends list
+      let newFriendsApproved = approvedFriendList[0].current;
+      newFriendsApproved = newFriendsApproved.push(req.body.currentUser);
+      // Save changes
+      const newApprovedFriendsList = new Friends({
+        user: approvedFriendList[0].user,
+        current: approvedFriendList[0].current,
+        requests: newRequests,
+        awaitingApproval: approvedFriendList[0].awaitingApproval,
+        _id: approvedFriendList[0]._id,
+      });
+      const updateApprovedFriend = await Friends.findByIdAndUpdate(
+        approvedFriendList[0]._id,
+        newApprovedFriendsList
+      );
+
+      res.json("Success");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -263,36 +290,21 @@ exports.friend_remove = asyncHandler(async (req, res, next) => {
       }
     }
   }
-  const newUserFriendsList = new Friends({
-    user: currentFriendsList[0].user,
-    current: currentUserFriends,
-    requests: currentFriendsList.requests,
-    awaitingApproval: currentFriendsList[0].awaitingApproval,
-    _id: currentFriendsList[0]._id,
-  });
 
-  const newRemovedFriendsList = new Friends({
-    user: removedFriendList[0].user,
-    current: removedUserFriends,
-    requests: removedFriendList.requests,
-    awaitingApproval: removedFriendList[0].awaitingApproval,
-    _id: removedFriendList[0]._id,
-  });
-
-  //Save Changes
+  // Save Changes
   const updateUserFriends = await Friends.findByIdAndUpdate(
     currentFriendsList[0]._id,
-    newUserFriendsList
+    { current: currentUserFriends }
   );
 
   const updateRemovedFriends = await Friends.findByIdAndUpdate(
     removedFriendList[0]._id,
-    newRemovedFriendsList
+    { current: removedUserFriends }
   );
 
   res.json("Success");
 });
 
 // Example for accepting a friend request
-// curl -X POST http://localhost:3000/parley/friend/remove -H "Content-Type: application/json" -d '{"currentUser":"65aac53e9d6b84a1665c7196", "removedFriend":"65ab16999d55fb577750639e"}'
+// curl -X POST http://localhost:3000/parley/friend/remove -H "Content-Type: application/json" -d '{"currentUser":"65b3f655bbf9e2f3c1823d6b", "removedFriend":"65b3f74fbbf9e2f3c1823d8b"}'
 // Worked 1/22 12:30 pm
