@@ -5,7 +5,13 @@ import viewIcon from "../../assets/show.png";
 import getProfileDetails from "../getRequests/getProfileDetails";
 import getFriendStatus from "../getRequests/getFriendStatus";
 
-const UserProfile1 = ({ currentUser, userViewed, setUserViewed }) => {
+const UserProfile1 = ({
+  currentUser,
+  userViewed,
+  setUserViewed,
+  setCurrentTo,
+  setCurrentFriend,
+}) => {
   const { profileDetails, error, loading } = getProfileDetails(
     userViewed,
     false
@@ -14,6 +20,11 @@ const UserProfile1 = ({ currentUser, userViewed, setUserViewed }) => {
     currentUser._id,
     userViewed
   );
+
+  function newMessage(e) {
+    setCurrentTo(profileDetails.profile[0].user.username);
+    setCurrentFriend(userViewed);
+  }
 
   if (error) return <p>A Network Error has occurred. </p>;
   if (loading) return <p>Loading...</p>;
@@ -28,8 +39,8 @@ const UserProfile1 = ({ currentUser, userViewed, setUserViewed }) => {
               <h1 className="pageTitle">
                 Profile: {profileDetails.profile[0].user.username}
               </h1>
-              <button>
-                <Link to="/" id="userLink">
+              <button onClick={newMessage}>
+                <Link className="addButtonBox" to="/newMessage">
                   Send Message
                 </Link>
               </button>

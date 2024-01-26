@@ -5,8 +5,14 @@ import { useNavigate } from "react-router-dom";
 import usePostNewMessage from "../postRequests/postNewMessage";
 import getFriendsList from "../getRequests/getFriendsList";
 
-const NewMessage = ({ currentUser, setThreadViewed }) => {
-  const [currentTo, setCurrentTo] = useState("");
+const NewMessage = ({
+  currentUser,
+  setThreadViewed,
+  currentTo,
+  setCurrentTo,
+  currentFriend,
+  setCurrentFriend,
+}) => {
   const [possibleTo, setPossibleTo] = useState([]);
   const [isPossible, setIsPossible] = useState(false);
   const [currentText, setCurrentText] = useState("");
@@ -40,8 +46,14 @@ const NewMessage = ({ currentUser, setThreadViewed }) => {
     }
   }, [currentTo]);
 
+  useEffect(() => {
+    setIsPossible(true);
+    setPossibleTo([]);
+  }, [currentFriend]);
+
   function newMessageSubmit(e) {
-    if (isPossible) attemptNewMessage(currentUser._id, currentTo, currentText);
+    if (isPossible)
+      attemptNewMessage(currentUser._id, currentFriend, currentText);
   }
 
   function handleToChange(e) {
@@ -50,6 +62,13 @@ const NewMessage = ({ currentUser, setThreadViewed }) => {
 
   function handleTextChange(e) {
     setCurrentText(e.target.value);
+  }
+
+  function selectFriend(e) {
+    e.preventDefault();
+    const friend = possibleTo[e.target.className];
+    setCurrentFriend(friend._id);
+    setCurrentTo(friend.username);
   }
 
   if (error) return <p>A Network Error has occurred. </p>;
@@ -62,22 +81,33 @@ const NewMessage = ({ currentUser, setThreadViewed }) => {
         <div className="page">
           <div className="newMessageFormBox">
             <form className="newMessageForm">
-              <label className="formTitle">
-                To:
-                <input
-                  className="formToInput"
-                  type="text"
-                  placeholder="username"
-                  onChange={handleToChange}
-                  value={currentTo}
-                />
-                <div id="myDropdown" class="show">
+              <div className="formToBox">
+                <label className="formTo">
+                  To:
+                  <input
+                    className="formToInput"
+                    type="text"
+                    placeholder="username"
+                    onChange={handleToChange}
+                    value={currentTo}
+                  />
+                </label>
+                <div id="friendOptions">
                   {possibleTo.map((friend, index) => {
-                    let reference = `#${friend.username}`;
-                    return <p href={reference}>{friend.username}</p>;
+                    const currentIndex = index;
+                    return (
+                      <button
+                        id="selectedFriend"
+                        className={currentIndex}
+                        key={friend._id}
+                        onClick={selectFriend}
+                      >
+                        {friend.username}
+                      </button>
+                    );
                   })}
                 </div>
-              </label>
+              </div>
               <label className="formText">
                 Text:
                 <textarea

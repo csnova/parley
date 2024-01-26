@@ -9,11 +9,13 @@ import SignUp from "./SignUp";
 import Profile from "./Profile";
 import UpdateProfile from "./ProfileUpdate";
 import Threads from "./Threads";
+import NotViewedThreads from "./UnViewedMessages";
 import ThreadMessages from "./ThreadMessages";
 import NewMessage from "./NewMessage";
 import UserProfile2 from "./userProfile2";
 import UserProfile1 from "./userProfile1";
 import FriendsList from "./FriendsList";
+import AddFriends from "./AddFriend";
 
 function Home() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -21,6 +23,8 @@ function Home() {
   const [userToken, setUserToken] = useState(null);
   const [threadViewed, setThreadViewed] = useState(null);
   const [userViewed, setUserViewed] = useState(null);
+  const [currentTo, setCurrentTo] = useState("");
+  const [currentFriend, setCurrentFriend] = useState("");
   const { page } = useParams();
 
   function checkStorage() {
@@ -78,7 +82,7 @@ function Home() {
                 <Link to="/sign-out" className="subLinkBox">
                   Friend Requests
                 </Link>
-                <Link to="/sign-out" className="subLinkBox">
+                <Link to="/addFriends" className="subLinkBox">
                   Add Friend
                 </Link>
               </div>
@@ -88,7 +92,7 @@ function Home() {
                 <Link to="/newMessage" className="subLinkBox">
                   Create Message
                 </Link>
-                <Link to="/sign-out" className="subLinkBox">
+                <Link to="/notViewed" className="subLinkBox">
                   Unread Messages
                 </Link>
                 <Link to="/threads" className="subLinkBox">
@@ -152,31 +156,52 @@ function Home() {
                 setThreadViewed={setThreadViewed}
                 setUserViewed={setUserViewed}
               />
+            ) : page === "notViewed" ? (
+              <NotViewedThreads
+                currentUser={currentUser}
+                setThreadViewed={setThreadViewed}
+                setUserViewed={setUserViewed}
+              />
             ) : page === "threadMessages" ? (
               <ThreadMessages
                 currentUser={currentUser}
                 threadViewed={threadViewed}
                 setUserViewed={setUserViewed}
+                setCurrentTo={setCurrentTo}
+                setCurrentFriend={setCurrentFriend}
               />
             ) : page === "newMessage" ? (
               <NewMessage
                 currentUser={currentUser}
                 setThreadViewed={setThreadViewed}
+                currentTo={currentTo}
+                setCurrentTo={setCurrentTo}
+                currentFriend={currentFriend}
+                setCurrentFriend={setCurrentFriend}
               />
             ) : page === "userProfile1" ? (
               <UserProfile1
                 currentUser={currentUser}
                 userViewed={userViewed}
                 setUserViewed={setUserViewed}
+                setCurrentTo={setCurrentTo}
+                setCurrentFriend={setCurrentFriend}
               />
             ) : page === "userProfile2" ? (
               <UserProfile2
                 currentUser={currentUser}
                 userViewed={userViewed}
                 setUserViewed={setUserViewed}
+                setCurrentTo={setCurrentTo}
+                setCurrentFriend={setCurrentFriend}
               />
             ) : page === "friendsList" ? (
               <FriendsList
+                currentUser={currentUser}
+                setUserViewed={setUserViewed}
+              />
+            ) : page === "addFriends" ? (
+              <AddFriends
                 currentUser={currentUser}
                 setUserViewed={setUserViewed}
               />

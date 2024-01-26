@@ -246,10 +246,13 @@ body {
   align-items: center;
   background-color: var(--button-background-color);
   margin: 20px;
+  text-decoration: none;
+  color: var(--light-font-color);
 }
 
 .addButtonBox:hover {
   background-color: var(--bar-background-color);
+  color: var(--font-color);
 }
 
 /* Style for Tables */
@@ -409,20 +412,6 @@ textarea {
   flex-grow: 0;
 }
 
-/* Style for New message Form */
-.newMessageFormBox {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.newMessageForm {
-  max-width: 1000px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
 /* Style for Post & User Detail Page */
 .postDetails,
 .userDetails {
@@ -564,6 +553,58 @@ textarea {
   display: flex;
   flex-direction: row;
   align-self: flex-end;
+  align-items: center;
 }
 
-/* New Message Drop Down Menu */
+/* Style for New message Form */
+.newMessageFormBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.newMessageForm {
+  max-width: 1000px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.formToBox {
+  display: flex;
+  flex-direction: column;
+}
+
+input.formTextInput,
+input.formToInput {
+  width: 875px;
+  padding: 3px;
+  flex-grow: 0;
+}
+
+#friendOptions {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--button-border-color);
+  background-color: var(--form-background-color);
+  width: 500px;
+  margin-left: 40px;
+  max-height: 200px;
+  overflow: scroll;
+}
+
+#selectedFriend {
+  padding: 10px;
+  margin: 10px;
+  border: 1px solid var(--button-border-color);
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  background-color: var(--button-background-color);
+  color: var(--light-font-color);
+  text-decoration: none;
+}
+
+#selectedFriend:hover {
+  background-color: var(--bar-background-color);
+  color: var(--dark-font-color);
+}

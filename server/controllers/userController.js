@@ -28,6 +28,18 @@ exports.user_detail = asyncHandler(async (req, res, next) => {
 // curl -X GET http://localhost:3000/parley/user/details -H "Content-Type: application/json" -d '{"userID":"65aac53e9d6b84a1665c718e"}'
 // Worked 1/19 4:30 pm
 
+// Display a list of all Users
+exports.user_all = asyncHandler(async (req, res, next) => {
+  const allUsers = await User.find({}, "username _id")
+    .sort({ username: 1 })
+    .exec();
+  res.json(allUsers);
+});
+
+// Example for getting user details
+// curl -X GET http://localhost:3000/parley/user/all
+// Worked 1/19 4:30 pm
+
 // Handle User sign up on POST.
 exports.user_sign_up = [
   // Validate and sanitize fields.

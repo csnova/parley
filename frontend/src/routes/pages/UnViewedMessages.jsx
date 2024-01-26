@@ -1,18 +1,20 @@
 import { Link, Outlet } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import getUserThreads from "../getRequests/getUserThreads";
+import getNotViewedThreads from "../getRequests/getUnReadThreads";
 import viewIcon from "../../assets/show.png";
 
-const Threads = ({ currentUser, setThreadViewed, setUserViewed }) => {
-  const { userThreads, error, loading } = getUserThreads(currentUser._id);
+const NotViewedThreads = ({ currentUser, setThreadViewed, setUserViewed }) => {
+  const { unreadThreads, error, loading } = getNotViewedThreads(
+    currentUser._id
+  );
   if (error) return <p>A Network Error has occurred. </p>;
   if (loading) return <p>Loading...</p>;
   return (
     <div className="page">
       {currentUser ? (
         <div className="page">
-          <h2 className="tableHeader">Your Message Threads</h2>
+          <h2 className="tableHeader">Unread Messages</h2>
           <div className="tableBox">
             <table className="genericTable">
               <thead>
@@ -22,7 +24,7 @@ const Threads = ({ currentUser, setThreadViewed, setUserViewed }) => {
                 </tr>
               </thead>
               <tbody>
-                {userThreads.threadList.map((thread, index) => {
+                {unreadThreads.unViewed.map((thread, index) => {
                   function onUserClick(e) {
                     let userID = e.target.className;
                     setUserViewed(userID);
@@ -30,24 +32,12 @@ const Threads = ({ currentUser, setThreadViewed, setUserViewed }) => {
 
                   function onThreadClick(e) {
                     let threadID = e.target.className;
-                    threadID = threadID.slice(12);
-                    threadID = userThreads.threadList[threadID]._id;
                     setThreadViewed(threadID);
                   }
 
-                  const threadButtonClass = `threadButton${index}`;
-                  let userButtonClass = "";
-
-                  let friendName = "unknown";
-                  if (thread.user1._id !== currentUser._id) {
-                    friendName = thread.user1.username;
-                    userButtonClass = thread.user1._id;
-                  }
-                  if (thread.user2._id !== currentUser._id) {
-                    friendName = thread.user2.username;
-                    userButtonClass = thread.user2._id;
-                  }
-
+                  const threadButtonClass = thread.thread;
+                  const userButtonClass = thread.from._id;
+                  const friendName = thread.from.username;
                   return (
                     <tr key={thread._id}>
                       <td>
@@ -98,4 +88,4 @@ const Threads = ({ currentUser, setThreadViewed, setUserViewed }) => {
   );
 };
 
-export default Threads;
+export default NotViewedThreads;

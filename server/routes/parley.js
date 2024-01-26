@@ -10,6 +10,7 @@ const thread_controller = require("../controllers/threadController");
 
 // User Routes
 router.get("/user/details/:userID", user_controller.user_detail);
+router.get("/user/all", user_controller.user_all);
 router.post("/user/sign-up", user_controller.user_sign_up);
 router.post("/user/sign-in", user_controller.user_sign_in);
 router.post("/user/sign-out", user_controller.user_sign_out);
@@ -29,9 +30,11 @@ router.post("/friend/remove", friend_controller.friend_remove);
 router.get("/message/:messageID", message_controller.message_details);
 router.post("/message/create", message_controller.message_create);
 router.post("/message/viewed", message_controller.message_viewed);
+router.post("/message/viewed/all", message_controller.message_viewed_all);
 
 // Thread Routers
 router.get("/thread/:userID", thread_controller.thread_list);
 router.get("/thread/messages/:threadID", thread_controller.thread_messages);
+router.get("/thread/unViewed/:userID", thread_controller.thread_unViewed);
 
 module.exports = router;

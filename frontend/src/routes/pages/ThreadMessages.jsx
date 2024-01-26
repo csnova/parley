@@ -2,21 +2,40 @@ import { Link, Outlet } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import getThreadDetails from "../getRequests/getTheadDetails";
+import useMarkAsViewed from "../postRequests/postMarkViewed";
 import Moment from "moment";
 import addIcon from "../../assets/add.png";
+import notViewed from "../../assets/unviewed.png";
 
-const ThreadMessages = ({ currentUser, threadViewed, setUserViewed }) => {
+const ThreadMessages = ({
+  currentUser,
+  threadViewed,
+  setUserViewed,
+  setCurrentTo,
+  setCurrentFriend,
+}) => {
   const { threadDetails, error, loading } = getThreadDetails(threadViewed);
+  const { attemptMarkAsViewed } = useMarkAsViewed();
   if (error) return <p>A Network Error has occurred. </p>;
   if (loading) return <p>Loading...</p>;
 
   let friendName;
+  let friendID;
   if (threadDetails.messageList[0].from._id !== currentUser._id) {
     friendName = threadDetails.messageList[0].from.username;
+    friendID = threadDetails.messageList[0].from._id;
   }
   if (threadDetails.messageList[0].to._id !== currentUser._id) {
     friendName = threadDetails.messageList[0].to.username;
+    friendID = threadDetails.messageList[0].to._id;
   }
+
+  function newMessage(e) {
+    setCurrentTo(friendName);
+    setCurrentFriend(friendID);
+  }
+
+  attemptMarkAsViewed(threadViewed, currentUser._id);
   return (
     <div className="page">
       {currentUser ? (
@@ -33,6 +52,9 @@ const ThreadMessages = ({ currentUser, threadViewed, setUserViewed }) => {
 
                 let className = "messageBox";
                 if (isCurrentUser) className = "currentUserMessage";
+
+                let isViewed = false;
+                if (message.viewed) isViewed = true;
 
                 function onUserClick(e) {
                   let userID = e.target.className;
@@ -58,18 +80,29 @@ const ThreadMessages = ({ currentUser, threadViewed, setUserViewed }) => {
                       <div className="timeTile">
                         <p>{timestamp}</p>
                       </div>
+                      {isViewed ? (
+                        <p></p>
+                      ) : (
+                        <img
+                          src={notViewed}
+                          alt="message has been viewed"
+                          className="addIcon"
+                        />
+                      )}
                     </div>
                   </div>
                 );
               })}
             </div>
-            <Link className="addButtonBox" to="/">
-              <img
-                src={addIcon}
-                alt="link to send a new message in thread"
-                className="addIcon"
-              />
-            </Link>
+            <button onClick={newMessage}>
+              <Link className="addButtonBox" to="/newMessage">
+                <img
+                  src={addIcon}
+                  alt="link to send a new message in thread"
+                  className="addIcon"
+                />
+              </Link>
+            </button>
           </div>
         </div>
       ) : (

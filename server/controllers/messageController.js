@@ -97,3 +97,40 @@ exports.message_viewed = asyncHandler(async (req, res, next) => {
 // Example for marking a message as viewed
 // curl -X POST http://localhost:3000/parley/message/viewed -H "Content-Type: application/json" -d '{"messageID" : "65aff020e8bbe910aeb45c84"}'
 // Worked 1/23 9:30 am
+
+// Handle marking message as viewed
+exports.message_viewed_all = asyncHandler(async (req, res, next) => {
+  const [messageList] = await Promise.all([
+    Message.find(
+      { thread: req.body.threadID },
+      "from to text timestamp thread viewed _id"
+    ).exec(),
+  ]);
+
+  for (let i = 0; i < messageList.length; i++) {
+    let toId = String(messageList[i].to);
+    if (toId === req.body.currentUser) {
+      // Create a new message object
+      const newMessage = new Message({
+        from: messageList[i].from,
+        to: messageList[i].to,
+        text: messageList[i].text,
+        timestamp: messageList[i].timestamp,
+        thread: messageList[i].thread,
+        viewed: true,
+        _id: messageList[i]._id,
+      });
+
+      const updateMessage = await Message.findByIdAndUpdate(
+        messageList[i]._id,
+        newMessage
+      );
+    }
+  }
+
+  //Send back Thread ID
+  res.json("Success");
+});
+// Example for marking a message as viewed
+// curl -X POST http://localhost:3000/parley/message/viewed/all -H "Content-Type: application/json" -d '{"threadID" : "65b2af9ed8aca8de1ec2ff1d", "currentUser" : "65afe6cc865aa8e8a4986721"}'
+// Worked 1/23 9:30 am
