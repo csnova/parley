@@ -5,9 +5,9 @@ import getFriendsList from "../getRequests/getFriendsList";
 import viewIcon from "../../assets/show.png";
 
 const FriendsList = ({ currentUser, setUserViewed }) => {
-  const { friendsList, error, loading } = getFriendsList(currentUser._id);
-  if (error) return <p>A Network Error has occurred. </p>;
-  if (loading) return <p>Loading...</p>;
+  const { friendsList, error1, loading1 } = getFriendsList(currentUser._id);
+  if (error1) return <p>A Network Error has occurred. </p>;
+  if (loading1) return <p>Loading...</p>;
   return (
     <div className="page">
       {currentUser ? (

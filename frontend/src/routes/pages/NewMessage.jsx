@@ -17,7 +17,7 @@ const NewMessage = ({
   const [isPossible, setIsPossible] = useState(false);
   const [currentText, setCurrentText] = useState("");
   const navigate = useNavigate();
-  const { friendsList, error, loading } = getFriendsList(currentUser._id);
+  const { friendsList, error1, loading1 } = getFriendsList(currentUser._id);
   const { newMessage, attemptNewMessage } = usePostNewMessage();
 
   useEffect(() => {
@@ -74,8 +74,8 @@ const NewMessage = ({
     setCurrentTo(friend.username);
   }
 
-  if (error) return <p>A Network Error has occurred. </p>;
-  if (loading) return <p>Loading...</p>;
+  if (error1) return <p>A Network Error has occurred. </p>;
+  if (loading1) return <p>Loading...</p>;
   return (
     <div className="page">
       <h1 className="pageTitle">Create Message</h1>

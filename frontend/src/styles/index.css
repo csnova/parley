@@ -14,8 +14,8 @@
   -moz-osx-font-smoothing: grayscale;
 
   overflow-x: hidden;
-  overflow-y: auto;
-  /* scrollbar-gutter: stable both-edges; */
+  overflow-y: scroll;
+
   margin: 0;
 
   --page-background-color: #bfc9d9;
@@ -133,6 +133,7 @@ body {
 .centerPage {
   display: flex;
   flex-direction: row;
+  max-width: 100vw;
 }
 
 /* Style for Navigation Side Bar */
@@ -143,7 +144,9 @@ body {
   align-items: center;
   justify-content: start;
   width: 170px;
-  height: 92vh;
+  min-height: 92vh;
+  max-height: 100%;
+  padding: 5px;
 }
 
 .linkBox {
@@ -153,6 +156,7 @@ body {
   box-shadow: 0 3px 10px var(--bar-shadow-color);
   color: var(--font-color);
   text-decoration: none;
+  min-width: 155px;
 }
 
 .linkBox:hover {
@@ -200,6 +204,7 @@ body {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  min-width: 590px;
 }
 
 .pageSpecificInfo,
@@ -214,6 +219,7 @@ body {
 
 .pageTitle {
   text-align: center;
+  min-width: 740px;
 }
 
 /* Style for Sign in Message */
@@ -377,17 +383,18 @@ label {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  padding: 10px;
+  justify-content: flex-end;
 }
 
 input,
 textarea {
+  margin: 10px;
   flex-grow: 1;
   margin-left: 10px;
   font-size: 18px;
   background-color: var(--form-background-color);
   color: var(--dark-font-color);
+  max-width: 680px;
 }
 
 .profileButton,
@@ -493,6 +500,13 @@ textarea {
   height: 40px;
 }
 
+.profileButtons {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Style for update profile page */
 
 .updateProfileInput {
@@ -574,10 +588,12 @@ textarea {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-width: 740px;
 }
 
 .newMessageForm {
   max-width: 1000px;
+  min-width: 740px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -600,9 +616,9 @@ input.formToInput {
   border: 1px solid var(--button-border-color);
   background-color: var(--form-background-color);
   width: 500px;
-  margin-left: 40px;
+  margin-left: 50px;
   max-height: 200px;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 
 #selectedFriend {
@@ -618,6 +634,45 @@ input.formToInput {
 }
 
 #selectedFriend:hover {
+  background-color: var(--bar-background-color);
+  color: var(--dark-font-color);
+}
+
+.addFriendBox {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.addFriendInput {
+  width: 600px;
+}
+
+#userOptions {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--button-border-color);
+  background-color: var(--form-background-color);
+  width: 500px;
+  max-height: 200px;
+  overflow-y: scroll;
+}
+
+#selectedUser {
+  padding: 10px;
+  margin: 10px;
+  border: 1px solid var(--button-border-color);
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  background-color: var(--button-background-color);
+  color: var(--light-font-color);
+  text-decoration: none;
+}
+
+#selectedUser:hover {
   background-color: var(--bar-background-color);
   color: var(--dark-font-color);
 }

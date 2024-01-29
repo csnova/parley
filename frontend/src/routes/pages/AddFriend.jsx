@@ -41,31 +41,33 @@ const AddFriends = ({ currentUser, setUserViewed }) => {
     <div className="page">
       {currentUser ? (
         <div className="page">
-          <h2 className="tableHeader">Add Friends</h2>
-          <label className="formTo">
-            To:
-            <input
-              className="formToInput"
-              type="text"
-              placeholder="username"
-              onChange={handleAddChange}
-              value={currentAdd}
-            />
-          </label>
-          <div id="friendOptions">
-            {possibleAdd.map((friend, index) => {
-              return (
-                <button
-                  onClick={setUserId}
-                  id="selectedFriend"
-                  key={friend._id}
-                >
-                  <Link to="/userProfile1" className={friend._id}>
-                    {friend.username}
-                  </Link>
-                </button>
-              );
-            })}
+          <div className="addFriendBox">
+            <h2 className="tableHeader">Add Friends</h2>
+            <label className="addFriendLabel">
+              <input
+                className="addFriendInput"
+                type="text"
+                placeholder="username"
+                onChange={handleAddChange}
+                value={currentAdd}
+              />
+            </label>
+
+            <div id="userOptions">
+              {possibleAdd.map((friend, index) => {
+                return (
+                  <button
+                    onClick={setUserId}
+                    id="selectedUser"
+                    key={friend._id}
+                  >
+                    <Link to="/userProfile1" className={friend._id}>
+                      {friend.username}
+                    </Link>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       ) : (

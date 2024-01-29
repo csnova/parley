@@ -44,7 +44,7 @@ exports.friend_list = asyncHandler(async (req, res, next) => {
 });
 
 // Example for getting a list of a users friends
-// curl -X GET http://localhost:3000/parley/friend/65afe6f0865aa8e8a498672f
+// curl -X GET http://localhost:3000/parley/friend/65b3f74fbbf9e2f3c1823d8b
 // Worked 1/22 10:00 am
 
 // Display if 2 users are friends on GET.

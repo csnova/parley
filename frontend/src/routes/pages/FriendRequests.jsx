@@ -5,10 +5,10 @@ import getFriendsList from "../getRequests/getFriendsList";
 import useAcceptRequest from "../postRequests/postAcceptRequest";
 
 const FriendsRequests = ({ currentUser, setUserViewed }) => {
-  const { friendsList, error, loading } = getFriendsList(currentUser._id);
+  const { friendsList, error1, loading1 } = getFriendsList(currentUser._id);
   const { attemptAcceptFriend } = useAcceptRequest();
-  if (error) return <p>A Network Error has occurred. </p>;
-  if (loading) return <p>Loading...</p>;
+  if (error1) return <p>A Network Error has occurred. </p>;
+  if (loading1) return <p>Loading...</p>;
   return (
     <div className="page">
       {currentUser ? (

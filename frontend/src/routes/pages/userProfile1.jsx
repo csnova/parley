@@ -3,9 +3,11 @@ import { useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import viewIcon from "../../assets/show.png";
 import getProfileDetails from "../getRequests/getProfileDetails";
+import getFriendsList from "../getRequests/getFriendsList";
 import getFriendStatus from "../getRequests/getFriendStatus";
 import useAddFriend from "../postRequests/postAddFriend";
 import useRemoveFriend from "../postRequests/postRemoveFriend";
+import { useNavigate } from "react-router-dom";
 
 const UserProfile1 = ({
   currentUser,
@@ -18,21 +20,19 @@ const UserProfile1 = ({
     userViewed,
     false
   );
-  const { friendStatus, error1, loading1 } = getFriendStatus(
-    currentUser._id,
-    userViewed
-  );
+  const { friendsList, error1, loading1 } = getFriendsList(currentUser._id);
   const { attemptAddFriend } = useAddFriend();
   const { attemptRemoveFriend } = useRemoveFriend();
-  const [requestSent, setRequestSent] = useState(false);
+  const navigate = useNavigate();
 
   function addFriendSubmit(e) {
     attemptAddFriend(currentUser._id, userViewed);
-    setRequestSent(true);
+    navigate("/userProfile2");
   }
 
   function removeFriendSubmit(e) {
     attemptRemoveFriend(currentUser._id, userViewed);
+    navigate("/userProfile2");
   }
 
   function newMessage(e) {
@@ -44,36 +44,58 @@ const UserProfile1 = ({
   if (loading) return <p>Loading...</p>;
   if (error1) return <p>A Network Error has occurred. </p>;
   if (loading1) return <p>Loading...</p>;
+
+  let friendStatus = false;
+  if (friendsList) {
+    for (let i = 0; i < friendsList.current.length; i++) {
+      let currentFriend = String(friendsList.current[i]._id);
+      if (currentFriend === userViewed) friendStatus = "friend";
+    }
+    for (let i = 0; i < friendsList.awaitingApproval.length; i++) {
+      let currentFriend = String(friendsList.awaitingApproval[i]._id);
+      if (currentFriend === userViewed) friendStatus = "approval";
+    }
+    for (let i = 0; i < friendsList.requests.length; i++) {
+      let currentFriend = String(friendsList.requests[i]._id);
+      if (currentFriend === userViewed) friendStatus = "requested";
+    }
+  }
+
   return (
     <div className="page">
       {currentUser ? (
         <div>
-          {friendStatus ? (
-            <div className="profileBar">
-              <h1 className="pageTitle">
-                Profile: {profileDetails.profile[0].user.username}
-              </h1>
-              <button id="userLink" onClick={newMessage}>
-                <Link to="/newMessage">Send Message</Link>
-              </button>
-              <button id="userLink" onClick={removeFriendSubmit}>
-                <Link to="/friendsList">Remove Friend</Link>
-              </button>
-            </div>
-          ) : (
-            <div className="profileBar">
-              <h1 className="pageTitle">
-                Profile: {profileDetails.profile[0].user.username}
-              </h1>
-              {requestSent ? (
+          <div className="profileBar">
+            <h1 className="pageTitle">
+              Profile: {profileDetails.profile[0].user.username}
+            </h1>
+            {friendStatus === "friend" ? (
+              <div className="profileButtons">
+                <button id="userLink" onClick={newMessage}>
+                  <Link to="/newMessage">Send Message</Link>
+                </button>
+                <button id="userLink" onClick={removeFriendSubmit}>
+                  <Link to="/friendsList">Remove Friend</Link>
+                </button>
+              </div>
+            ) : friendStatus === "requested" ? (
+              <div className="profileButtons">
                 <button id="userLink">Request Sent</button>
-              ) : (
+              </div>
+            ) : friendStatus === "approval" ? (
+              <div className="profileButtons">
+                <button id="userLink">
+                  <Link to="/friendRequests">Accept Request?</Link>
+                </button>
+              </div>
+            ) : (
+              <div className="profileButtons">
                 <button id="userLink" onClick={addFriendSubmit}>
                   Add
                 </button>
-              )}
-            </div>
-          )}
+              </div>
+            )}
+          </div>
           <div className="tableBox">
             <table className="genericTable">
               <thead>

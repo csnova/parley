@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 
 const getFriendsList = (userID) => {
   const [friendsList, setFriendsList] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [error1, setError] = useState(null);
+  const [loading1, setLoading] = useState(true);
 
   useEffect(() => {
     fetch(`http://localhost:3000/parley/friend/${userID} `, {
@@ -22,7 +22,7 @@ const getFriendsList = (userID) => {
       })
       .finally(() => setLoading(false));
   }, []);
-  return { friendsList, error, loading };
+  return { friendsList, error1, loading1 };
 };
 
 export default getFriendsList;
